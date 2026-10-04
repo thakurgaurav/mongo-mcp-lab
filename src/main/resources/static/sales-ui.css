@@ -1,0 +1,632 @@
+:root {
+    color-scheme: light;
+    --ink: #172d35;
+    --muted: #61737a;
+    --border: #dbe4e5;
+    --accent: #136854;
+    --paper: #f5f8f7;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font: 15px/1.6 system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+    color: var(--ink);
+    background: var(--paper);
+}
+
+button,
+textarea,
+select {
+    font: inherit;
+}
+
+button {
+    cursor: pointer;
+    border: 0;
+    border-radius: 10px;
+    padding: 10px 16px;
+    background: var(--accent);
+    color: white;
+    font-weight: 650;
+}
+
+button:hover {
+    filter: brightness(0.95);
+}
+
+button:disabled {
+    cursor: wait;
+    opacity: 0.55;
+}
+
+button:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline: 3px solid #479d88;
+    outline-offset: 3px;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: 285px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+/* Sidebar */
+
+.sidebar {
+    padding: 30px 24px;
+    background: #123c36;
+    color: #f1f7f5;
+    display: flex;
+    flex-direction: column;
+}
+
+.brand {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    font-weight: 720;
+    letter-spacing: -0.3px;
+}
+
+.brand-mark {
+    background: #d8f2bd;
+    color: #153c30;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 12px;
+    font-size: 23px;
+}
+
+.brand div > span {
+    display: block;
+    font-size: 9px;
+    letter-spacing: 1.8px;
+    color: #b0cbc3;
+}
+
+.sidebar-body {
+    margin-top: 52px;
+}
+
+.eyebrow {
+    font-size: 10px;
+    font-weight: 750;
+    letter-spacing: 1.8px;
+    margin: 0 0 10px;
+}
+
+.sidebar .eyebrow {
+    color: #aad7c7;
+}
+
+.sidebar h2 {
+    font-size: 27px;
+    line-height: 1.25;
+    letter-spacing: -0.8px;
+    margin: 0 0 16px;
+}
+
+.sidebar p:not(.eyebrow) {
+    color: #c1d7d0;
+    font-size: 13px;
+}
+
+.dataset {
+    border: 1px solid #386159;
+    border-radius: 12px;
+    padding: 14px 12px;
+    margin-top: 26px;
+    font-size: 12px;
+}
+
+.dataset > span:last-child {
+    color: #aecbc1;
+    font-size: 11px;
+    margin-left: 16px;
+}
+
+.dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    background: #b4e4a0;
+    border-radius: 50%;
+    margin-right: 7px;
+}
+
+.starters-label {
+    margin-top: 38px;
+}
+
+.suggestions {
+    display: grid;
+    gap: 8px;
+}
+
+.suggestions button {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    text-align: left;
+    font-size: 12px;
+    background: #ffffff0c;
+    border: 1px solid #ffffff19;
+    font-weight: 500;
+}
+
+.suggestions button:hover {
+    background: #ffffff16;
+}
+
+.sidebar-note {
+    margin: 48px 0 0;
+    padding-top: 20px;
+    border-top: 1px solid #ffffff1c;
+}
+
+/* Main layout */
+
+main {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 540px;
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 42px;
+    border-bottom: 1px solid var(--border);
+    background: #ffffffc9;
+    gap: 16px;
+}
+
+.topbar .eyebrow {
+    color: var(--muted);
+    font-size: 9px;
+}
+
+h1 {
+    font-size: 20px;
+    margin: 0;
+    line-height: 1.2;
+    letter-spacing: -0.6px;
+}
+
+.secondary {
+    background: white;
+    border: 1px solid var(--border);
+    color: var(--ink);
+    font-size: 12px;
+}
+
+.conversation {
+    overflow-y: auto;
+    flex: 1;
+    min-height: 0;
+    padding: 32px max(24px, calc((100% - 900px) / 2));
+    scroll-behavior: smooth;
+}
+
+/* Welcome message */
+
+.welcome {
+    max-width: 550px;
+    margin: 6vh auto 0;
+    text-align: center;
+}
+
+.welcome-mark {
+    display: inline-grid;
+    place-items: center;
+    height: 58px;
+    width: 58px;
+    border: 1px solid #d3e4db;
+    border-radius: 18px;
+    color: var(--accent);
+    background: #eaf3e9;
+    font-size: 30px;
+    margin-bottom: 26px;
+}
+
+.welcome .eyebrow {
+    color: var(--accent);
+}
+
+.welcome h2 {
+    font-size: clamp(28px, 3.2vw, 42px);
+    line-height: 1.16;
+    letter-spacing: -1.5px;
+    font-weight: 650;
+    margin: 12px 0 20px;
+}
+
+.welcome > p:last-child {
+    max-width: 410px;
+    margin: auto;
+    color: var(--muted);
+}
+
+/* Conversation messages */
+
+.message {
+    margin-bottom: 26px;
+    max-width: 100%;
+}
+
+.message-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    font-size: 11px;
+    color: var(--muted);
+    font-weight: 700;
+    margin: 0 0 8px;
+}
+
+.message.user {
+    max-width: 85%;
+    margin-left: auto;
+}
+
+.user .message-header {
+    justify-content: flex-end;
+}
+
+.question-text {
+    border-radius: 16px 16px 4px 16px;
+    background: #e3eeea;
+    padding: 15px 20px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+}
+
+.answer-card {
+    padding: 22px 24px;
+    border: 1px solid var(--border);
+    background: white;
+    border-radius: 4px 16px 16px 16px;
+    box-shadow: 0 3px 10px #173e3010;
+    overflow: hidden;
+}
+
+.answer-content {
+    overflow-wrap: anywhere;
+}
+
+.answer-content > :first-child {
+    margin-top: 0;
+}
+
+.answer-content > :last-child {
+    margin-bottom: 0;
+}
+
+.answer-content h2 {
+    font-size: 21px;
+    margin-top: 26px;
+    line-height: 1.3;
+    letter-spacing: -0.5px;
+}
+
+.answer-content h3 {
+    font-size: 17px;
+    margin-top: 22px;
+}
+
+.answer-content h4 {
+    font-size: 15px;
+}
+
+.answer-content p,
+.answer-content ul,
+.answer-content ol {
+    margin: 12px 0;
+}
+
+.answer-content blockquote {
+    margin: 18px 0;
+    border-left: 3px solid #8db9a7;
+    padding: 4px 16px;
+    background: #f3f8f4;
+    color: #415d53;
+}
+
+.answer-content pre {
+    overflow-x: auto;
+    white-space: pre-wrap;
+    padding: 14px;
+    background: #f0f4f4;
+    border-radius: 8px;
+}
+
+.answer-content code {
+    font-size: 13px;
+}
+
+.answer-content hr {
+    border: 0;
+    border-top: 1px solid var(--border);
+    margin: 24px 0;
+}
+
+.copy-button {
+    background: transparent;
+    color: var(--muted);
+    font-size: 11px;
+    padding: 4px 8px;
+    font-weight: 500;
+}
+
+.error-card {
+    background: #fff6f2;
+    border: 1px solid #edcfc4;
+    padding: 16px;
+    border-radius: 12px;
+    color: #793d28;
+    white-space: pre-wrap;
+}
+
+.error-card button {
+    display: block;
+    margin-top: 12px;
+}
+
+.plain-answer {
+    white-space: pre-wrap;
+}
+
+/* Tables */
+
+.table-scroll {
+    overflow-x: auto;
+    margin: 18px 0;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+}
+
+table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 13px;
+    font-variant-numeric: tabular-nums;
+}
+
+caption {
+    text-align: left;
+    padding: 12px;
+    font-weight: 700;
+    background: #f7faf8;
+}
+
+th {
+    text-align: left;
+    background: #edf4ef;
+    color: #244b3e;
+}
+
+th,
+td {
+    padding: 11px 13px;
+    border-bottom: 1px solid #e6edeb;
+    vertical-align: top;
+}
+
+td:not(:first-child) {
+    text-align: right;
+}
+
+tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+tbody tr:nth-child(even) {
+    background: #fafcfa;
+}
+
+tfoot {
+    font-weight: 700;
+    background: #edf4ef;
+    border-top: 1px solid var(--border);
+}
+
+/* Chart controls and drawing area */
+
+.chart-panel {
+    margin: 18px 0 8px;
+    border-top: 1px solid var(--border);
+    padding-top: 16px;
+}
+
+.chart-controls {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    font-size: 12px;
+}
+
+.chart-controls select {
+    max-width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    background: white;
+    color: var(--ink);
+}
+
+.chart-controls button {
+    font-size: 12px;
+    padding: 8px 12px;
+}
+
+.chart-note {
+    color: var(--muted);
+    font-size: 11px;
+    margin: 8px 0;
+}
+
+canvas {
+    width: 100%;
+    height: auto;
+    display: block;
+    margin-top: 12px;
+}
+
+/* Question composer */
+
+.composer-area {
+    padding: 0 max(24px, calc((100% - 900px) / 2)) 18px;
+}
+
+.status {
+    font-size: 12px;
+    color: var(--accent);
+    min-height: 20px;
+    margin: 0 0 7px;
+}
+
+.composer {
+    border: 1px solid #cadad2;
+    border-radius: 15px;
+    background: white;
+    padding: 14px 16px 12px;
+    box-shadow: 0 5px 24px #123c3608;
+}
+
+.composer label {
+    display: block;
+    font-size: 11px;
+    font-weight: 650;
+    color: var(--muted);
+    margin-bottom: 6px;
+}
+
+textarea {
+    width: 100%;
+    resize: vertical;
+    max-height: 200px;
+    min-height: 65px;
+    border: 0;
+    color: var(--ink);
+    background: transparent;
+    padding: 3px;
+}
+
+textarea:focus {
+    outline: 0;
+}
+
+.composer:focus-within {
+    outline: 2px solid #73a18a;
+    outline-offset: 2px;
+}
+
+.composer-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+}
+
+#character-count {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+#send-button {
+    font-size: 13px;
+}
+
+#send-button span {
+    margin-left: 20px;
+}
+
+.composer-note {
+    font-size: 10px;
+    text-align: center;
+    color: var(--muted);
+    margin: 9px 0 0;
+}
+
+[hidden] {
+    display: none !important;
+}
+
+/* Responsive layout */
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 225px minmax(0, 1fr);
+    }
+
+    .sidebar {
+        padding: 24px 18px;
+    }
+
+    .topbar {
+        padding: 20px 24px;
+    }
+}
+
+@media (max-width: 680px) {
+    .layout {
+        display: block;
+    }
+
+    .sidebar {
+        display: none;
+    }
+
+    .topbar {
+        padding: 18px;
+    }
+
+    .conversation {
+        padding: 22px 16px;
+    }
+
+    .composer-area {
+        padding: 0 16px 12px;
+    }
+
+    .answer-card {
+        padding: 16px;
+    }
+
+    .message.user {
+        max-width: 95%;
+    }
+
+    .welcome {
+        margin-top: 4vh;
+    }
+
+    .welcome h2 {
+        font-size: 32px;
+    }
+
+    .composer-note {
+        text-align: left;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .conversation {
+        scroll-behavior: auto;
+    }
+}

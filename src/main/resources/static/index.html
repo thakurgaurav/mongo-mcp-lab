@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta
+        http-equiv="Content-Security-Policy"
+        content="
+            default-src 'none';
+            script-src 'self';
+            style-src 'self';
+            connect-src 'self';
+            img-src 'none';
+            object-src 'none';
+            base-uri 'none';
+            form-action 'none';
+        "
+    >
+
+    <meta name="referrer" content="no-referrer">
+
+    <title>Sales Investigator · Mongo MCP Lab</title>
+
+    <link rel="stylesheet" href="/sales-ui.css">
+    <script src="/sales-ui.js" defer></script>
+</head>
+
+<body>
+    <div class="layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">M</span>
+
+                <div>
+                    Mongo MCP Lab
+                    <span>SALES INVESTIGATOR</span>
+                </div>
+            </div>
+
+            <div class="sidebar-body">
+                <p class="eyebrow">YOUR DATA</p>
+
+                <h2>Small questions.<br>Deeper insights.</h2>
+
+                <p>
+                    Explore sales, customer behavior, payments,
+                    returns, and inventory.
+                </p>
+
+                <div class="dataset">
+                    <span class="dot" aria-hidden="true"></span>
+                    Synthetic sales dataset
+                    <br>
+                    <span>April–September 2026 · USD</span>
+                </div>
+
+                <p class="eyebrow starters-label">
+                    START AN INVESTIGATION
+                </p>
+
+                <div id="suggestions" class="suggestions">
+                    <button
+                        type="button"
+                        data-question="Compare completed-order sales by month from April through September 2026. Use orderDate and orders.totalCents. Show order count, total sales in USD, average order value, and month-over-month sales change in a table."
+                    >
+                        Monthly sales trend
+                        <span aria-hidden="true">↗</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        data-question="Compare August and September 2026 completed-order sales by product category. Use order item lineTotalCents and show both months, dollar change, and percentage change. Reconcile category totals with overall sales."
+                    >
+                        Category performance
+                        <span aria-hidden="true">↗</span>
+                    </button>
+
+                    <button
+                        type="button"
+                        data-question="Compare August and September 2026 cash collections using SUCCESS payments by paymentDate minus REFUNDED returns by refundDate. Show gross collections, refunds, and net collections in USD without double counting."
+                    >
+                        Collections after refunds
+                        <span aria-hidden="true">↗</span>
+                    </button>
+                </div>
+            </div>
+
+            <p class="sidebar-note">
+                Answers are generated from your sales data.
+                Review the stated definitions and limitations.
+            </p>
+        </aside>
+
+        <main>
+            <header class="topbar">
+                <div>
+                    <span class="eyebrow">WORKSPACE</span>
+                    <h1>Sales Investigator</h1>
+                </div>
+
+                <button
+                    id="clear-chat"
+                    class="secondary"
+                    type="button"
+                >
+                    Clear chat
+                </button>
+            </header>
+
+            <section
+                id="conversation"
+                class="conversation"
+                role="log"
+                aria-live="polite"
+                aria-label="Investigation conversation"
+            >
+                <div id="welcome" class="welcome">
+                    <span class="welcome-mark" aria-hidden="true">↗</span>
+
+                    <p class="eyebrow">FROM QUESTIONS TO FINDINGS</p>
+
+                    <h2>What would you like<br>to understand?</h2>
+
+                    <p>
+                        Ask about a trend, compare a period, or investigate
+                        a change. Results can include formatted text,
+                        tables, and bar charts.
+                    </p>
+                </div>
+            </section>
+
+            <div class="composer-area">
+                <p
+                    id="status"
+                    class="status"
+                    role="status"
+                    aria-live="polite"
+                ></p>
+
+                <form id="question-form" class="composer">
+                    <label for="question">Your sales question</label>
+
+                    <textarea
+                        id="question"
+                        name="question"
+                        maxlength="4000"
+                        rows="3"
+                        placeholder="How did completed-order sales change from August to September?"
+                        required
+                    ></textarea>
+
+                    <div class="composer-footer">
+                        <span id="character-count">0 / 4,000</span>
+
+                        <button id="send-button" type="submit">
+                            Investigate
+                            <span aria-hidden="true">↑</span>
+                        </button>
+                    </div>
+                </form>
+
+                <p class="composer-note">
+                    Each question is independent.
+                    Include the dates and details you want analyzed.
+                    Ctrl/Cmd + Enter to send.
+                </p>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

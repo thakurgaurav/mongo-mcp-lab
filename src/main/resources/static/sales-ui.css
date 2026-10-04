@@ -630,3 +630,113 @@ textarea:focus {
         scroll-behavior: auto;
     }
 }
+
+/* AI Pulse palette: navy, blue, cyan, and white.
+   These rules change colors only; layout and spacing stay the same. */
+
+:root {
+    --ink: #102a43;
+    --muted: #536b82;
+    --border: #d7e5ef;
+    --accent: #087ea4;
+    --paper: #f3f8fc;
+}
+
+button:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+    outline-color: #21b8cc;
+}
+
+.sidebar {
+    background: #0b1f3a;
+    color: #f5faff;
+}
+
+.brand-mark {
+    background: #22c7d5;
+    color: #08263d;
+}
+
+.brand div > span {
+    color: #a9d9ea;
+}
+
+.sidebar .eyebrow {
+    color: #72d9e6;
+}
+
+.sidebar p:not(.eyebrow) {
+    color: #c4d7e5;
+}
+
+.dataset {
+    border-color: #2f5271;
+}
+
+.dataset > span:last-child,
+.sidebar-note {
+    color: #bad2e3;
+}
+
+.dot {
+    background: #54e5d2;
+}
+
+.topbar {
+    background: #ffffff;
+}
+
+.welcome-mark {
+    border-color: #b5e4ef;
+    background: #e5f7fc;
+}
+
+.question-text {
+    background: #e4f2f8;
+}
+
+.answer-card {
+    box-shadow: 0 3px 10px #102a4310;
+}
+
+.answer-content blockquote {
+    border-left-color: #20b8ce;
+    background: #eff9fc;
+    color: #36566d;
+}
+
+.answer-content pre {
+    background: #f0f6fa;
+}
+
+caption {
+    background: #f3fafd;
+}
+
+th,
+tfoot {
+    background: #e2f4fa;
+}
+
+th {
+    color: #123d5a;
+}
+
+th,
+td {
+    border-bottom-color: #e0eaf1;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fbfe;
+}
+
+.composer {
+    border-color: #c7dee9;
+    box-shadow: 0 5px 24px #0b1f3a08;
+}
+
+.composer:focus-within {
+    outline-color: #21b8cc;
+}

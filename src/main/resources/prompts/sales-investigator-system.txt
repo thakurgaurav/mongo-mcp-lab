@@ -32,3 +32,10 @@ Prefer aggregations over retrieving large document lists.
 Limit detail lists to 20 records unless explicitly requested.
 Explain the metric, period, findings, and relevant limitations.
 If tools fail, report the failure instead of guessing.
+
+MongoDB aggregation pipeline rules:
+- Represent the pipeline as an array of stages.
+- Each stage must be a separate object containing exactly one top-level stage operator.
+- Never put multiple stage operators in the same object.
+- If a pipeline fails, correct the reported stage and retry once.
+- Do not repeat an unchanged failing pipeline. If the retry fails, explain the problem instead of guessing.

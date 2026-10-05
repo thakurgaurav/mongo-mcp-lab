@@ -20,6 +20,17 @@ A Spring Boot sales investigation app that uses Spring AI and OpenAI to answer q
 
 ![Sales investigation with a chart response](docs/images/ui-chart-response.png)
 
+The chart controls support four chart types for compatible tabular responses:
+
+- Bar chart (the default)
+- Line chart
+- Area chart
+- Donut chart
+
+Use the chart metric selector to choose the numeric column and the chart type
+selector to redraw the visualization. The original bar-chart behavior remains
+the fallback when a selected visualization is not suitable for the data.
+
 ### Charts and table together
 
 ![Sales investigation showing a chart with its supporting table](docs/images/ui-chart-and-table.png)
@@ -31,7 +42,7 @@ A Spring Boot sales investigation app that uses Spring AI and OpenAI to answer q
 - **OpenAI GPT‑6 Luna** interprets sales questions and selects MongoDB tools.
 - **MongoDB MCP Server** exposes database tools to Spring AI over STDIO.
 - **MongoDB 7** stores synthetic sales data in the `sales_lab` database.
-- **The browser UI** renders investigation answers, including formatted tables and charts when available.
+- **The browser UI** renders investigation answers, including formatted tables and selectable bar, line, area, and donut charts when compatible data is available.
 
 Spring Boot starts the MongoDB MCP server as a child process. The MCP server then connects to MongoDB using the read-only `mcp_reader` account. The OpenAI API key is used by the Spring Boot application and must stay on the server side.
 

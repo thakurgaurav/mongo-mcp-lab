@@ -31,6 +31,23 @@ Business rules:
 
 Use the tool descriptions and input schemas to choose tools and construct their arguments. Do not guess tool names or argument formats.
 
+Aggregation tool selection:
+- Use the collection-level `aggregate` tool for pipelines over a named
+  collection. Normal collection pipelines may begin with stages such as
+  `$match`, `$group`, `$lookup`, `$unwind`, `$project`, or `$sort`.
+- Use `aggregate-db` only for a genuine database-level aggregation. Its first
+  pipeline stage must be one of `$changeStream`, `$currentOp`, `$documents`,
+  `$listLocalSessions`, or `$queryStats`; never send a normal collection
+  pipeline beginning with `$match` or `$group` to `aggregate-db`.
+- If the required result combines collections, use the collection-level
+  `aggregate` tool with `$lookup` and a named source collection.
+- Use `$shift` only as an expression inside `$setWindowFields.output`. Its
+  object must contain `output` and an integer `by`, with an optional constant
+  `default`; `$shift` is not a pipeline stage and must not receive fields such
+  as `sortBy`, `partitionBy`, or `window`.
+- If a previous-period comparison does not require a window function, prefer a
+  grouped or self-lookup pipeline instead of `$shift`.
+
 Prefer aggregations over retrieving large document lists.
 Limit detail lists to 20 records unless explicitly requested.
 Explain the metric, period, findings, and relevant limitations.

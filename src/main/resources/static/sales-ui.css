@@ -399,6 +399,72 @@ h1 {
     border-radius: 10px;
 }
 
+.download-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 8px;
+    background: var(--paper);
+    border-bottom: 1px solid var(--border);
+}
+
+@media print {
+    body.printing > *:not(.print-only) {
+        display: none !important;
+    }
+
+    .print-only {
+        display: block !important;
+        width: 100%;
+        color: #102a43;
+    }
+
+    .print-only .table-scroll,
+    .print-only .chart-panel {
+        display: block !important;
+        margin: 0;
+        border-color: #c8dce8 !important;
+        box-shadow: none !important;
+        overflow: visible !important;
+    }
+
+    .print-only img {
+        display: block;
+        width: 100%;
+        height: auto;
+    }
+
+    .sidebar,
+    .topbar,
+    .composer,
+    .download-actions,
+    .chart-controls,
+    .copy-button,
+    .error-card,
+    .welcome {
+        display: none !important;
+    }
+
+    .conversation,
+    .message,
+    .answer-card,
+    .table-scroll,
+    .chart-panel {
+        overflow: visible !important;
+        box-shadow: none !important;
+        border-color: #c8dce8 !important;
+    }
+
+    .table-scroll,
+    .chart-panel {
+        break-inside: avoid;
+    }
+}
+
+.print-only {
+    display: none;
+}
+
 table {
     border-collapse: collapse;
     width: 100%;

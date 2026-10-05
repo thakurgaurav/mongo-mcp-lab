@@ -125,6 +125,7 @@ function showAnswer(body) {
 
         table.before(wrapper);
         wrapper.append(table);
+        addTableDownloadButton(table, wrapper);
 
         addChartControls(table, wrapper);
     });
@@ -155,6 +156,83 @@ function showError(messageText, question) {
     card.append(element("p", "", messageText), restoreButton);
     message.append(card);
     scrollToLatest();
+}
+
+function downloadFile(content, filename, type) {
+    const blob = content instanceof Blob
+        ? content
+        : new Blob([content], { type });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = filename;
+    document.body.append(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+}
+
+function printElement(target, canvas) {
+    const printRoot = element("div", "print-only");
+    const clone = target.cloneNode(true);
+
+    if (canvas) {
+        const clonedCanvas = clone.querySelector("canvas");
+        if (clonedCanvas) {
+            const image = document.createElement("img");
+            image.src = canvas.toDataURL("image/png");
+            image.alt = canvas.getAttribute("aria-label") || "Sales chart";
+            clonedCanvas.replaceWith(image);
+        }
+    }
+
+    clone.querySelectorAll("button, select").forEach(control => control.remove());
+    printRoot.append(clone);
+    document.body.append(printRoot);
+    document.body.classList.add("printing");
+
+    const cleanup = () => {
+        document.body.classList.remove("printing");
+        printRoot.remove();
+        window.removeEventListener("afterprint", cleanup);
+    };
+
+    window.addEventListener("afterprint", cleanup);
+    window.print();
+}
+
+function escapeCsv(value) {
+    const text = String(value ?? "");
+    return /[",\n]/.test(text)
+        ? `"${text.replace(/"/g, '""')}"`
+        : text;
+}
+
+function tableToCsv(table) {
+    return Array.from(table.rows)
+        .map(row => Array.from(row.cells)
+            .map(cell => escapeCsv(cell.textContent.trim()))
+            .join(","))
+        .join("\n");
+}
+
+function addTableDownloadButton(table, wrapper) {
+    const actions = element("div", "download-actions");
+    const button = element("button", "secondary", "Download CSV");
+    const pdfButton = element("button", "secondary", "Print / Save PDF");
+    button.type = "button";
+    pdfButton.type = "button";
+    button.addEventListener("click", () => {
+        downloadFile(
+            tableToCsv(table),
+            "sales-investigation-results.csv",
+            "text/csv;charset=utf-8"
+        );
+    });
+    pdfButton.addEventListener("click", () => printElement(wrapper));
+    actions.append(button, pdfButton);
+    wrapper.prepend(actions);
 }
 
 /*
@@ -356,6 +434,38 @@ function drawBarChart(canvas, labels, column) {
     context.lineTo(zeroX, height - 28);
     context.stroke();
 
+    // Add numeric value ticks so the horizontal bar scale is readable.
+    context.font = "11px system-ui";
+    context.fillStyle = "#536b82";
+    context.textAlign = "center";
+    const tickCount = 5;
+    for (let index = 0; index <= tickCount; index++) {
+        const tickValue = minimum +
+            (maximum - minimum) * index / tickCount;
+        const tickX = plotLeft + plotWidth * index / tickCount;
+
+        context.strokeStyle = "#c8dce8";
+        context.globalAlpha = 0.55;
+        context.beginPath();
+        context.moveTo(tickX, 42);
+        context.lineTo(tickX, height - 28);
+        context.stroke();
+        context.globalAlpha = 1;
+
+        context.fillStyle = "#536b82";
+        context.fillText(
+            (tickValue * magnitude).toLocaleString(undefined, {
+                maximumFractionDigits: 2
+            }),
+            tickX,
+            height - 10
+        );
+    }
+
+    context.fillStyle = "#102a43";
+    context.font = "600 12px system-ui";
+    context.fillText("Value", plotLeft + plotWidth / 2, height - 25);
+
     labels.forEach((label, index) => {
         const y = 62 + index * rowHeight;
         const cell = column.cells[index];
@@ -403,6 +513,148 @@ function drawBarChart(canvas, labels, column) {
     );
 }
 
+function drawLineChart(canvas, labels, column, fill = false) {
+    const width = 900;
+    const height = 420;
+    const resolution = 2;
+    canvas.width = width * resolution;
+    canvas.height = height * resolution;
+    const context = canvas.getContext("2d");
+
+    if (!context) {
+        canvas.hidden = true;
+        return;
+    }
+
+    context.scale(resolution, resolution);
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, width, height);
+
+    const values = column.cells.map(cell => cell.value);
+    const numbers = values.filter(value => value !== null);
+    const minimum = Math.min(0, ...numbers);
+    const maximum = Math.max(1, ...numbers);
+    const left = 80;
+    const right = 40;
+    const top = 50;
+    const bottom = 65;
+    const x = index => left + index * (width - left - right) /
+        Math.max(1, labels.length - 1);
+    const y = value => height - bottom -
+        ((value - minimum) / (maximum - minimum)) * (height - top - bottom);
+
+    context.strokeStyle = "#c8dce8";
+    context.beginPath();
+    context.moveTo(left, top);
+    context.lineTo(left, height - bottom);
+    context.lineTo(width - right, height - bottom);
+    context.stroke();
+
+    context.strokeStyle = "#1479b8";
+    context.lineWidth = 3;
+    context.beginPath();
+    values.forEach((value, index) => {
+        if (value === null) return;
+        const pointX = x(index);
+        const pointY = y(value);
+        index === 0 || values[index - 1] === null
+            ? context.moveTo(pointX, pointY)
+            : context.lineTo(pointX, pointY);
+    });
+    context.stroke();
+
+    if (fill) {
+        context.lineTo(x(values.length - 1), height - bottom);
+        context.lineTo(x(0), height - bottom);
+        context.globalAlpha = 0.16;
+        context.fillStyle = "#19afc1";
+        context.fill();
+        context.globalAlpha = 1;
+    }
+
+    values.forEach((value, index) => {
+        if (value === null) return;
+        context.fillStyle = "#19afc1";
+        context.beginPath();
+        context.arc(x(index), y(value), 5, 0, Math.PI * 2);
+        context.fill();
+        context.fillStyle = "#102a43";
+        context.font = "12px system-ui";
+        context.textAlign = "center";
+        context.fillText(column.cells[index].display, x(index), y(value) - 12);
+        context.fillStyle = "#536b82";
+        context.font = "12px system-ui";
+        context.textAlign = "center";
+        context.fillText(fitCanvasText(context, labels[index], 110), x(index), height - 35);
+    });
+
+    context.fillStyle = "#102a43";
+    context.font = "600 16px system-ui";
+    context.textAlign = "left";
+    context.fillText(column.title, 20, 28);
+}
+
+function drawDonutChart(canvas, labels, column) {
+    const width = 900;
+    const height = 420;
+    const resolution = 2;
+    canvas.width = width * resolution;
+    canvas.height = height * resolution;
+    const context = canvas.getContext("2d");
+
+    if (!context) return;
+    context.scale(resolution, resolution);
+    context.fillStyle = "#ffffff";
+    context.fillRect(0, 0, width, height);
+
+    const values = column.cells.map(cell => Math.max(0, cell.value || 0));
+    const total = values.reduce((sum, value) => sum + value, 0);
+    if (!total) return;
+
+    const colors = ["#1479b8", "#19afc1", "#102a43", "#536b82", "#c8dce8"];
+    let start = -Math.PI / 2;
+    values.forEach((value, index) => {
+        const end = start + value / total * Math.PI * 2;
+        context.fillStyle = colors[index % colors.length];
+        context.beginPath();
+        context.moveTo(280, 220);
+        context.arc(280, 220, 145, start, end);
+        context.closePath();
+        context.fill();
+        start = end;
+    });
+
+    context.fillStyle = "#ffffff";
+    context.beginPath();
+    context.arc(280, 220, 65, 0, Math.PI * 2);
+    context.fill();
+
+    context.fillStyle = "#102a43";
+    context.font = "600 16px system-ui";
+    context.fillText(column.title, 20, 28);
+    labels.forEach((label, index) => {
+        const y = 80 + index * 28;
+        context.fillStyle = colors[index % colors.length];
+        context.fillRect(540, y - 12, 14, 14);
+        context.fillStyle = "#536b82";
+        context.font = "13px system-ui";
+        context.fillText(
+            `${fitCanvasText(context, label, 130)}: ${column.cells[index].display}` +
+            ` (${((values[index] / total) * 100).toFixed(1)}%)`,
+            565,
+            y
+        );
+    });
+}
+
+function drawChart(canvas, labels, column, type) {
+    if (type === "line") return drawLineChart(canvas, labels, column);
+    if (type === "area") return drawLineChart(canvas, labels, column, true);
+    if (type === "donut") return drawDonutChart(canvas, labels, column);
+    // Keep the existing renderer as the default and safe fallback.
+    return drawBarChart(canvas, labels, column);
+}
+
 function addChartControls(table, wrapper) {
     const data = getChartData(table);
 
@@ -414,6 +666,8 @@ function addChartControls(table, wrapper) {
     const controls = element("div", "chart-controls");
     const label = element("label", "", "Chart metric ");
     const select = document.createElement("select");
+    const typeLabel = element("label", "", "Chart type ");
+    const typeSelect = document.createElement("select");
     const toggleButton = element("button", "", "Show chart");
     const canvas = document.createElement("canvas");
     const note = element(
@@ -422,6 +676,17 @@ function addChartControls(table, wrapper) {
         "Bars use the displayed table values. Missing values have no bar. " +
         "Charts do not independently verify the answer."
     );
+
+    [
+        ["bar", "Bar"],
+        ["line", "Line"],
+        ["area", "Area"],
+        ["donut", "Donut"]
+    ].forEach(([value, text]) => {
+        const option = element("option", "", text);
+        option.value = value;
+        typeSelect.append(option);
+    });
 
     toggleButton.type = "button";
     toggleButton.setAttribute("aria-expanded", "false");
@@ -437,12 +702,31 @@ function addChartControls(table, wrapper) {
     });
 
     function redraw() {
-        drawBarChart(
+        drawChart(
             canvas,
             data.labels,
-            data.columns[Number(select.value)]
+            data.columns[Number(select.value)],
+            typeSelect.value
         );
     }
+
+    const downloadButton = element("button", "secondary", "Download PNG");
+    const pdfButton = element("button", "secondary", "Print / Save PDF");
+    downloadButton.type = "button";
+    pdfButton.type = "button";
+    downloadButton.addEventListener("click", () => {
+        if (canvas.hidden) {
+            canvas.hidden = false;
+            redraw();
+        }
+
+        canvas.toBlob(blob => {
+            if (blob) {
+                downloadFile(blob, "sales-investigation-chart.png", "image/png");
+            }
+        }, "image/png");
+    });
+    pdfButton.addEventListener("click", () => printElement(panel, canvas));
 
     toggleButton.addEventListener("click", () => {
         const show = canvas.hidden;
@@ -463,8 +747,17 @@ function addChartControls(table, wrapper) {
         }
     });
 
+    typeSelect.addEventListener("change", redraw);
+
     label.append(select);
-    controls.append(label, toggleButton);
+    typeLabel.append(typeSelect);
+    controls.append(
+        label,
+        typeLabel,
+        toggleButton,
+        downloadButton,
+        pdfButton
+    );
     panel.append(controls, note, canvas);
     wrapper.after(panel);
 }

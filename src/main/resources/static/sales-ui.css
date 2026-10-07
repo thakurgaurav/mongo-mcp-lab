@@ -408,12 +408,16 @@ h1 {
     border-bottom: 1px solid var(--border);
 }
 
+.print-only {
+    display: none;
+}
+
 @media print {
     body.printing > *:not(.print-only) {
         display: none !important;
     }
 
-    .print-only {
+    body.printing .print-only {
         display: block !important;
         width: 100%;
         color: #102a43;
@@ -459,10 +463,6 @@ h1 {
     .chart-panel {
         break-inside: avoid;
     }
-}
-
-.print-only {
-    display: none;
 }
 
 table {

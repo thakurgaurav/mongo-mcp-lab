@@ -650,3 +650,7 @@ Use the same question again after a prompt or model change to compare response t
 ## Future deployment note
 
 This lab currently runs the MongoDB MCP server locally as a child process over STDIO. For a deployment with multiple application instances, the MCP server could instead be run as a separately managed network service, provided the chosen MCP transport and deployment setup support that architecture. The application instances would then connect to that service rather than each launching a local MCP process.
+
+## License
+
+This project is licensed under the Apache License 2.0 (Apache-2.0). See the [LICENSE](LICENSE) file for the complete license text.
